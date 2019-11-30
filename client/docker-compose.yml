@@ -1,0 +1,47 @@
+version: "2"
+
+services:    
+  client:      
+    build: './' 
+    container_name: webclient
+    image: webapp-client        
+    restart: always        
+    ports:
+      - "3000:3000"  
+    working_dir: /client/src/app      
+    volumes:            
+      - ./:/client/src/app
+    entrypoint: ["npm", "start"]
+    links:            
+      - api        
+    networks:            
+      - webappnetwork
+
+  api: 
+    build: '../api'
+    image: webapp-api    
+    container_name: api    
+    restart: always        
+    ports: 
+      - "9000:9000"        
+    volumes:           
+      - ../api:/api                 
+    depends_on:            
+      - mongodb    
+    networks:            
+      - webappnetwork
+
+  mongodb:
+    container_name: mongodb
+    image: mongo # pull from docker hub 
+    ports: 
+      - '27017:27017'
+    networks: 
+      - webappnetwork
+
+networks:    
+  webappnetwork:        
+    driver: bridge
+
+
+
